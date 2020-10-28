@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const { categorySchema } = require('./category');
 
 const articleSchema = new mongoose.Schema({
@@ -11,13 +12,20 @@ const articleSchema = new mongoose.Schema({
         maxlength: 50
     },
     category: {
-        type: categorySchema,
-        required: true
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true,
+        index: true
     },
     content: {
         type: String,
         required: true,
         minlength: 10
+    },
+    description: {
+        type: String,
+        default: "No available description",
+        maxlength: 255
     }
 });
 
@@ -28,6 +36,7 @@ function validateArticle(article) {
         title: Joi.string().min(3).max(50).required(),
         categoryId: Joi.objectId().required(),
         content: Joi.string().min(10).required(),
+        description: Joi.string().max(255)
     }
     return Joi.validate(article, schema);
 }

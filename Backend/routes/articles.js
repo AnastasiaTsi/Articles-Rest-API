@@ -24,7 +24,8 @@ router.post('/', asyncMiddleware(async (req, res) => {
             _id: category._id,
             name: category.name
         },
-        content: req.body.content
+        content: req.body.content,
+        description: req.body.description
     });
     article = await article.save();
 
@@ -69,6 +70,15 @@ router.get('/:id', asyncMiddleware(async (req, res) => {
     res.send(article)
 }));
 
+// router.get('/?name=key', asyncMiddleware(async (req, res) => {
+//     console.log('im in ');
+//     const article = await Article.find(req.params.key);
+//     console.log('article - ' + article);
+//     console.log('key - ' + key);
+//     if (!article) return res.status(404).send('The article with the given name was not found.');
+
+//     res.send(article)
+// }));
 module.exports = router;
 
 

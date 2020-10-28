@@ -6,7 +6,8 @@ const categorySchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 3,
-        wavelength: 50
+        wavelength: 50,
+        unique: true
     }
 });
 
