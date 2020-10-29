@@ -7,33 +7,32 @@ import ArticleField from './articleField'
 function App() {
   console.log('I WAS LOADED ');
 
-  const [categoryOptions, setOption] = useState(['Any']);      //state with the category names
-  const [selectedCategory, setCategory] = useState('Any');    //category that is selected
-  const [articles, setArticles] = useState([]);
+  const [categoryNames, setOption] = useState(['Any']);      //state with the category names
+  const [selectedCategory, setSelectedCategory] = useState('Any');     //category that is selected
+  const [articles, setArticles] = useState(['-']);             // articles 
+  const [categories, setCategories]  = useState({ _id: "0", name: "Any" }); 
 
   useEffect(() => {
     /**
     * axios - get request to our backend
     */
-    const getCategoryResponse = axios.get("/categories");
-    const getArticleResponse = axios.get("/articles");
-    axios.all([getCategoryResponse, getArticleResponse])
-      .then(axios.spread((...responses) => {
-        const categoryResponse = responses[0].data;
-        const articleResponse = responses[1].data;
-
-        console.log('articleResponse');
-        console.log(articleResponse);
+    getArticles();
+    axios.get("/categories")
+      .then(response => {
+        console.log(response.data);
+        const categoryResponse = response.data;
 
         //create array for the name of the categories and add "All" categories option { _id: "0", name: "Any" }
-        var array = ['Any'];
+        var arrayNames = ['Any'];
+        var arrayCategories = [{ _id: "0", name: "Any" }];
         //populate array
         for (var i = 0; i < categoryResponse.length; i++) {
-          array.push(categoryResponse[i].name);
+          arrayNames.push(categoryResponse[i].name);
+          arrayCategories.push(categoryResponse[i]);
         }
-        setOption(array);
-        setArticles(articleResponse);
-      }))
+        setOption(arrayNames);
+        setCategories(arrayCategories);
+      })
 
       .catch(error => {
         if (error.response) {
@@ -46,29 +45,72 @@ function App() {
       });
   }, []);
 
-  function setCurrency(value) {
-    console.log('i was selected');
-    setCategory(value);
+  useEffect(() => {
+
+    getArticles();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory]);
+
+  function getArticles(){
+
+    var categoryId;
+
+    if (selectedCategory === "Any"){
+      axios.get("/articles")
+      .then(response => {
+        setArticles(response.data);
+      })
+      .catch(error => {
+        if (error.response) {
+          console.log("Problem With Response ", error.response.status);
+        } else if (error.request) {
+          console.log("Problem With Request ");
+        } else {
+          console.log("we have an error " + error);
+        }
+      });
+    }else{
+      for(var i = 0; i < categories.length; i++){
+        if(selectedCategory == categories[i].name){
+            categoryId = categories[i]._id;
+        }
+      }
+      
+      console.log(categoryId);
+      axios.get(`/articles/?category=${categoryId}`)
+      .then(response => {
+        setArticles(response.data);
+      })
+      .catch(error => {
+        if (error.response) {
+          console.log("Problem With Response ", error.response.status);
+        } else if (error.request) {
+          console.log("Problem With Request ");
+        } else {
+          console.log("we have an error " + error);
+        }
+      });
+    }
   }
 
-
-  console.log(`selectedCategory - ${selectedCategory}`);
-  console.log("categoryOptions - " + categoryOptions);
+  console.log('categoryNames');
+  console.log(categoryNames);
+  console.log(categories);
 
   return (
     <div className="App">
       <header className="App-header">
 
         <div className="select">
-          <SelectCategory
-            title="hello from app"
-            option={selectedCategory}
-            categoryOptions={categoryOptions}
-            onChange={event => setCurrency(event.target.value)}
-          />
+        <SelectCategory
+        title="hello from app"
+        option={selectedCategory}
+        categoryOptions={categoryNames}
+            onChange={event => setSelectedCategory(event.target.value)} />
         </div>
 
-        <ArticleField />
+        <ArticleField articles={articles}/>
 
       </header>
     </div>

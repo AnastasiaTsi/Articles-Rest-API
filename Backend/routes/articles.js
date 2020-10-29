@@ -6,8 +6,20 @@ const { Category } = require('../models/category');
 
 
 router.get('/', asyncMiddleware(async (req, res) => {
-    const categories = await Article.find();
-    res.send(categories)
+    
+    console.log(JSON.stringify(req.query));
+
+    if(Object.keys(req.query).length === 0 && (req.query).constructor === Object ){
+        console.log('hry hay ho');
+        const categories = await Article.find();
+
+        res.send(categories)
+    }else{
+
+        const categories = await Article.find(req.query);
+        console.log(categories);
+                   res.send(categories)
+    }
 }));
 
 
@@ -37,7 +49,7 @@ router.put('/:id', asyncMiddleware(async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     const category = await Category.findById(req.body.categoryId);
-
+    console.log(category);
     const article = await Article.findByIdAndUpdate(req.params.id,
         {
             title: req.body.title,
@@ -63,12 +75,19 @@ router.delete('/:id', asyncMiddleware(async (req, res) => {
 }));
 
 router.get('/:id', asyncMiddleware(async (req, res) => {
-    const article = await Article.findById(req.params.id);
+    
+    const  article = await Article.findById(req.params.id);
 
     if (!article) return res.status(404).send('The article with the given ID was not found.');
 
     res.send(article)
 }));
+
+// router.get('/:id', async(req, res) =>{
+//     console.log('tsoupraa');
+//     console.log(req.params.id);
+// });
+
 
 // router.get('/?name=key', asyncMiddleware(async (req, res) => {
 //     console.log('im in ');
@@ -81,19 +100,6 @@ router.get('/:id', asyncMiddleware(async (req, res) => {
 // }));
 module.exports = router;
 
-
-// 
-// 
-// 
-// 
-// get : id 
-// 
-// 
-//
-
-// pos kano post
-// {
-//     "title" : "anArticle",
-//     "categoryId": "5f9820eda3285f1c2c54b151",
-//     "content": "a small little article to test my mongo db"
-// }
+// let article = await Article.find({name: req.params.id});
+// console.log(article);
+// if(article === tmp)
