@@ -42,6 +42,19 @@ router.delete('/:id', asyncMiddleware(async (req, res) => {
     res.send(category);
 }));
 
+router.delete('/', asyncMiddleware(async (req, res) => {
+
+    if(Object.keys(req.query).length === 0 && (req.query).constructor === Object ){
+        res.status(400).send('Bad request');
+
+    }else{
+        
+        const category = await Category.findOneAndDelete(req.query);
+        if (!category) return res.status(404).send('The Category with the given Name was not found.');
+        res.send(category)
+    }
+}));
+
 router.get('/:id', asyncMiddleware(async (req, res) => {
     const category = await Category.findById(req.params.id);
 

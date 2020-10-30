@@ -3,49 +3,67 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import DeleteButton from './DeleteButton'
+import Button from '@material-ui/core/Button';
 import EditButton from './EditButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import axios from "axios";
+import TextField from '@material-ui/core/TextField';
 
-// const useStyles = makeStyles((theme) => ({
-//     root: {
-//         flexGrow: 1,
-//     },
-//     paper: {
-//         padding: theme.spacing(2),
-//         textAlign: 'center',
-//         color: theme.palette.text.secondary,
-//     },
-// }));
 
-export default class FullWidthGrid extends React.Component {
- //   const classes = useStyles();
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+    },
+    paper: {
+        padding: theme.spacing(5),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    },
+}));
 
-render() {
-    return (
-        <div >
-            <Grid container
-                direction="column"
-                justify="flex-start"
-                alignItems="flex-start" spacing={3}>
+const ArticleField = (props) => {
+    const classes = useStyles();
 
-                    <Grid container wrap="nowrap" spacing={2}>
+    const onClickDelete = (value) => {
+        axios.delete(`/articles?title=${value}`)
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
 
-                    {this.props.articles.map(option => (
-                        <Grid item xs>
-                            <h1>{option.title}</h1>
-                            <h4>{option.description}</h4>
-                            <Typography>{option.content}</Typography>
-                            <EditButton/>
-                            <DeleteButton/>
-                        </Grid>
-                        ))}
-                        
+return (
+    <Grid container
+        direction="column"
+        justify="flex-start"
+        alignItems="stretch" spacing={3}>
 
+        {props.articles.map(option => (
+            <Grid  item >
+                <Paper >
+                    <Typography variant="h4">{option.title}</Typography>
+                    <Typography variant="h5">{option.description}</Typography>
+                    <Typography variant="body1">{option.content}</Typography>
+
+                    <Grid
+                        container
+                        direction="row">
+
+                        <EditButton message="Edit Article"/>
+
+                        <Button  variant="outlined"
+                            className={classes.button} 
+                            startIcon={<DeleteIcon />} 
+                            onClick={event => onClickDelete(option.title)}></Button>
                     </Grid>
-                
-
+                </Paper>   
             </Grid>
-        </div>
+                ))}
+            
+    </Grid>
     );
 }
-}
+
+export default ArticleField;
