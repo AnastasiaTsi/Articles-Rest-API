@@ -1,13 +1,14 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React , {useState} from 'react';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import EditButton from './EditButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import axios from "axios";
 import TextField from '@material-ui/core/TextField';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,13 +18,30 @@ const useStyles = makeStyles((theme) => ({
     paper: {
         padding: theme.spacing(5),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
+        
     },
 }));
 
+const StyledBackdrop = withStyles({
+    root: {
+      backdropFilter: 'blur(7px) !important',
+      backgroundColor: 'rgb(0, 0, 0, 0)',
+    },
+  })(Backdrop);
+
 const ArticleField = (props) => {
     const classes = useStyles();
+    const [open, setOpen] = useState(false);
+    var textFieldContent='';
 
+    const handleChange = e => {
+        console.log(e.target.value);
+        textFieldContent = e.target.value;
+    }
+    const handleOpen = () => {
+        setOpen(true);
+      };
+    
     const onClickDelete = (value) => {
         axios.delete(`/articles?title=${value}`)
         .then(function (response) {
@@ -34,6 +52,38 @@ const ArticleField = (props) => {
         });
     }
 
+    const onClickEdit = ( id, category, description, title) => {
+        axios.put(`/articles/${id}`,{
+            "description": description,
+            "title": title,
+            "categoryId": category,
+            "content": textFieldContent
+        })
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    const PaperModal = withStyles({
+        root: {
+          outline: 'none',
+          padding: 20,
+          left: 0,
+          top: 0,
+          bottom: 0,
+          right: 0,
+          maxWidth: 450,
+          maxHeight: 450,
+          margin: 'auto',
+          position: 'absolute',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+        },
+      })(Paper);
+
 return (
     <Grid container
         direction="column"
@@ -42,26 +92,60 @@ return (
 
         {props.articles.map(option => (
             <Grid  item >
-                <Paper >
+                <Paper style={{ padding: 20}}>
                     <Typography variant="h4">{option.title}</Typography>
                     <Typography variant="h5">{option.description}</Typography>
                     <Typography variant="body1">{option.content}</Typography>
 
-                    <Grid
-                        container
+                    <Grid container
                         direction="row">
 
-                        <EditButton message="Edit Article"/>
+                        <Button 
+                            id="edit"
+                            className={classes.margin}
+                            label="Description"
+                            variant="outlined"
+                            multiline
+                            onClick={handleOpen}>Edit Article</Button>
 
-                        <Button  variant="outlined"
+                        <Button  
+                            variant="outlined"
                             className={classes.button} 
-                            startIcon={<DeleteIcon />} 
-                            onClick={event => onClickDelete(option.title)}></Button>
+                            onClick={event => onClickDelete(option.title, option._id)}>
+                            <DeleteIcon/>
+                        </Button>
+
+                        <Modal
+                            open={open}
+                            onClose={() => setOpen(false)}
+                            aria-labelledby="simple-modal-title"
+                            aria-describedby="simple-modal-description"
+                            BackdropComponent={StyledBackdrop}>
+
+                            <PaperModal elevation={8}>
+                                <Typography variant="h4">{option.title}</Typography>
+                                <Typography variant="h5">{option.description}</Typography>
+
+                                <TextField variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    style={{ margin: 8}}
+                                    onChange={handleChange}
+                                    defaultValue={option.content}>    
+                                </TextField>
+
+                                <Button  
+                                    variant="outlined"
+                                    className={classes.button} 
+                                    onClick={event => onClickEdit(option._id, option.category, option.description, option.title)}>
+                                    update article
+                                </Button>
+                            </PaperModal>
+                        </Modal>
                     </Grid>
                 </Paper>   
             </Grid>
-                ))}
-            
+            ))}     
     </Grid>
     );
 }

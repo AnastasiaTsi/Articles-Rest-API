@@ -11,6 +11,11 @@ const articles = require('./routes/articles');
 
 connectDB();
 app.use(express.json());
+
+/* ENDPOINTS */
+/**
+ * 
+ */
 app.use('/categories', categories);
 app.use('/articles', articles);
 
