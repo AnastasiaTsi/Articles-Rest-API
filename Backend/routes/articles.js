@@ -65,16 +65,19 @@ router.post('/', asyncMiddleware(async (req, res) => {
 }));
 
 /**
- * Update the content of an article with the article Id 
+ * Update the content of an article with the article name 
  */
 router.put('/:id', asyncMiddleware(async (req, res) => {
-    console.log(req.body);
         const { error } = validate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
         const category = await Category.findById(req.body.categoryId);
-        const articleBefore = await Article.find(req.query);
+        const articleBefore = await Article.find({ "title" : req.body.title});
 
-        const article = await Article.findOneAndUpdate(req.query,
+        console.log('>>>>>>>>>>>>>');
+        console.log(articleBefore[0].title);
+        console.log('<<<<<<<<<<<<<<<');
+
+        const article = await Article.findOneAndUpdate({ "title" : req.body.title},
             {
                 title: articleBefore[0].title,
                 category: {

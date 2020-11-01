@@ -177,6 +177,10 @@ const findCategoryId = () =>{
   return categoryId;
 }
 
+const reloadArticles = (e) =>{
+  getArticles();
+}
+
 
 const reloadCategories = (e) =>{
   getCategories();
@@ -217,15 +221,17 @@ const reloadCategories = (e) =>{
         direction="row"
         justify="space-around">
         <Grid item xs={7}>
-          <ArticleField articles={articles}/>
+          <ArticleField reloadArticles={event => reloadArticles(event)} articles={articles}/>
         </Grid>
+
         <Grid item xs={3}>
           <SelectCategory categories={categories}
               categoryNames={categoryNames}
               value={selectedCategory}
               reloadCategories={event => reloadCategories(event)}
-              onChange={event => setSelectedCategory(event.target.value)} />
-          <AddArticle categories={categories} selectedCategory={selectedCategory} categoryNames={categoryNames.slice(1,categoryNames.length)}/>
+              onChange={event => setSelectedCategory(event.target.value)}
+            />
+          <AddArticle reloadArticles={event => reloadArticles(event)} categories={categories} selectedCategory={selectedCategory} categoryNames={categoryNames.slice(1,categoryNames.length)}/>
         </Grid>
       </Grid>
 
@@ -234,10 +240,3 @@ const reloadCategories = (e) =>{
   );
 }
 export default App;
-
-
-
-//gia to edit sto arthro tha iparxei hidden textfiled me submit pou tha kanei
-//axios put kai tha kribete to h2
-
-//  articles/test?flag=false

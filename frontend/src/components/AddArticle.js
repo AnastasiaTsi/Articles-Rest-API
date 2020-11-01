@@ -36,7 +36,7 @@ const AddArticle = (props) => {
     const classes = useStyles();
     /** data variable changes when the user types something on the textFields
      *  or selects category. Holds the object that we are going to post as a new article  */ 
-    var data = {title: '', categoryId: 'select category', description:'', content: ''};
+    var data = {title: '', categoryId: 'select category', description:' ', content: ''};
     /**useState to open and close the modal */
     const [open, setOpen] = useState(false);
 
@@ -71,9 +71,11 @@ const AddArticle = (props) => {
      * onClick uses axios to post the new article 
      */
     const onClick = (e) => {
+        findCategoryId();
         axios.post("/articles", data)
         .then(function (response) {
             setOpen(false)
+            props.reloadArticles();
             console.log(response);
         })
         .catch(function (error) {
