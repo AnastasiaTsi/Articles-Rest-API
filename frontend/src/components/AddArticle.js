@@ -1,18 +1,11 @@
 import React, {useState}  from 'react';
 import {ThemeProvider, makeStyles, createMuiTheme, withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
 import { blue } from '@material-ui/core/colors';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 import axios from "axios";
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Paper from '@material-ui/core/Paper';
+import { Select, MenuItem, Paper, Modal, Backdrop, Button, Grid, TextField } from '@material-ui/core'
 
 
 const useStyles = makeStyles((theme) => ({
-
-    
 
     root: {
         display: 'flex',
@@ -41,25 +34,46 @@ const theme = createMuiTheme({
 
 const AddArticle = (props) => {
     const classes = useStyles();
-
-    const [data, setData] = useState({title: '', categoryId: '', description:'', content: ''});
+    /** data variable changes when the user types something on the textFields
+     *  or selects category. Holds the object that we are going to post as a new article  */ 
+    var data = {title: '', categoryId: 'select category', description:'', content: ''};
+    /**useState to open and close the modal */
     const [open, setOpen] = useState(false);
-
 
     const handleOpen = () => {
         setOpen(true);
     };
 
-    const handleChange = e => {
-        console.log(e.id);
-        setData({...data, [e.target.name] : e.target.value});
+    /**
+    * find from category name its Id
+    */
+    const findCategoryId = () =>{
+        var categoryId = '';
+        for(var i = 0; i < props.categories.length; i++){
+        if(data.categoryId === props.categories[i].name){
+            categoryId = props.categories[i]._id;
+            data= {...data, categoryId : categoryId };
+            break;
+        }
+        }
     }
 
-    React.useEffect(()=> {console.log(data)},[data])
+    /**
+     * handleChange is setting the variable data depending on what 
+     * the user has typed in the textFields
+     * @param {what is written on the textField} e 
+     */
+    const handleChange = e => {
+        data= {...data, [e.target.name] : e.target.value};
+    }
 
-    const onClick = (event) => {
+    /**
+     * onClick uses axios to post the new article 
+     */
+    const onClick = (e) => {
         axios.post("/articles", data)
         .then(function (response) {
+            setOpen(false)
             console.log(response);
         })
         .catch(function (error) {
@@ -91,7 +105,6 @@ return (
         variant="contained"
         color="primary"
         className={classes.margin}
-        multiline
         onClick={handleOpen}>Add Article</Button>
     
     <Modal
@@ -110,24 +123,19 @@ return (
                         className={classes.margin}
                         label="Title"
                         name="title"
-                        value={data.title}
                     />
-                    <TextField 
-                        className={classes.margin}
-                        label="Category"
-                        variant="outlined"
-                        disabled 
-                        value={props.categoryName}
-                        name="category">
+                <Select name="categoryId" onChange={handleChange} variant="outlined" label="categories">
+                    {props.categoryNames.map(option => (
+                        <MenuItem key={option} value={option}>{option}</MenuItem>
+                    ))}
+                </Select>
 
-                    </TextField>
                     <TextField
                         className={classes.margin}
                         label="Description"
                         variant="outlined"
                         name="description"
                         multiline
-                        onChange={event => setData(event.target.value)}
                     />
                     <TextField
                         className={classes.margin}
@@ -135,7 +143,6 @@ return (
                         variant="outlined"
                         name="content"
                         multiline
-                        onChange={event => setData(event.target.value)}
                     />
                 </ThemeProvider>
 
@@ -145,7 +152,7 @@ return (
                     color="primary"
                     className={classes.button} 
                     onClick={event => onClick(event)}>
-                    {props.message}
+                    Add new article
                 </Button>
             </Grid>
         </form>

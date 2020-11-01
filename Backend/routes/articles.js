@@ -7,6 +7,7 @@ const { Category } = require('../models/category');
 
 /**
  * Get articles 
+ * flag - return with content or not
  */
 router.get('/', asyncMiddleware(async (req, res) => {
     /**
@@ -113,11 +114,26 @@ router.delete('/', asyncMiddleware(async (req, res) => {
 }));
 
 /**
- * Get article with its Id
+ * Get article with its Id or by name
  */
 router.get('/:id', asyncMiddleware(async (req, res) => {
-    const  article = await Article.findById(req.params.id);
-    if (!article) return res.status(404).send('The article with the given ID was not found.');
+
+    /**
+     * Get the article with a content
+     */
+    if(req.query.flag == "true"){
+        const articles = await Article.find( {"title" : req.params.id})
+        res.send(articles)
+
+    /**
+     * Get article without content
+     */
+
+    }else{
+        const articles = await Article.find( {"title" : req.params.id}).select('-content');
+        res.send(articles)
+    }
+
     res.send(article)
 }));
 

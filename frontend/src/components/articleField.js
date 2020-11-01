@@ -1,15 +1,8 @@
 import React , {useState} from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { Button, TextField, Paper, Grid, Typography, Modal, Backdrop } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
 import axios from "axios";
-import TextField from '@material-ui/core/TextField';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -105,7 +98,6 @@ return (
                             className={classes.margin}
                             label="Description"
                             variant="outlined"
-                            multiline
                             onClick={handleOpen}>Edit Article</Button>
 
                         <Button  
@@ -137,7 +129,7 @@ return (
                                 <Button  
                                     variant="outlined"
                                     className={classes.button} 
-                                    onClick={event => onClickEdit(option._id, option.category, option.description, option.title)}>
+                                    onClick={e => onClickEdit(option._id, option.category, option.description, option.title)}>
                                     update article
                                 </Button>
                             </PaperModal>

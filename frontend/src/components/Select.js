@@ -1,20 +1,8 @@
 import React, {useState} from 'react';
 import { makeStyles , withStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import { Select } from '@material-ui/core'
-import MenuItem from '@material-ui/core/MenuItem';
+import { Select, MenuItem, Paper, Modal, Backdrop, Button, Grid, RadioGroup, FormControl, FormControlLabel, TextField, Radio, InputLabel } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
 import axios from "axios";
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,6 +26,7 @@ const SelectCategory =(props) => {
     const [value, setValue] = useState('All');
     /** useState 'open' is used to open and close the modal*/
     const [open, setOpen] = useState(false);
+
     /**
      * when the text on the etxtField is changed
      * it gets saved at the 'textFieldContent' variable
@@ -58,12 +47,11 @@ const SelectCategory =(props) => {
      * .post the name of the new category using the
      * textFieldContent variable
      */
-    const onClickAdd = (event) => {
+    const onClickAdd = (e) => {
         axios.post("/categories",{
             "name": textFieldContent
         })
         .then(function (response) {
-            console.log(response);
             props.reloadCategories(textFieldContent);
         })
         .catch(function (error) {
@@ -92,7 +80,6 @@ const SelectCategory =(props) => {
      * @param {The bullet that is curently selected} event 
      */
     const handleChange = (event) => {
-        console.log(event.target.value);
         setValue(event.target.value);
     };
 
@@ -122,7 +109,7 @@ const SelectCategory =(props) => {
 
             <InputLabel id="inputLabel">Category</InputLabel>
                 <Select
-                    value={props.option}
+                    value={props.value}
                     label="category"
                     onChange={props.onChange}>
                     {props.categoryNames.map(option => (
