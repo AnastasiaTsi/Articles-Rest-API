@@ -35,6 +35,10 @@ const MappedField = (props) => {
       setOpen(true);
     };
   
+/**
+ * onClickDelete deletes the article with the given title
+ * @param {title of the article} value 
+ */
   const onClickDelete = (value) => {
       axios.delete(`/articles?title=${value}`)
       .then(function (response) {
@@ -46,6 +50,13 @@ const MappedField = (props) => {
       });
   }
 
+  /**
+   * onClickEdit updates the article with the new description
+   * @param {id of the article } id 
+   * @param {categoryId of the article } category 
+   * @param {new description of the article} description 
+   * @param {title of the article} title 
+   */
   const onClickEdit = ( id, category, description, title) => {
 
       axios.put(`/articles/${id}`,{
@@ -144,4 +155,3 @@ return (
 }
 
 export default MappedField;
-

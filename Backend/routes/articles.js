@@ -73,10 +73,6 @@ router.put('/:id', asyncMiddleware(async (req, res) => {
         const category = await Category.findById(req.body.categoryId);
         const articleBefore = await Article.find({ "title" : req.body.title});
 
-        console.log('>>>>>>>>>>>>>');
-        console.log(articleBefore[0].title);
-        console.log('<<<<<<<<<<<<<<<');
-
         const article = await Article.findOneAndUpdate({ "title" : req.body.title},
             {
                 title: articleBefore[0].title,

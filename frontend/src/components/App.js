@@ -37,8 +37,6 @@ const App = ()=> {
    */
   useEffect(() => {
     getArticles();
-    console.log('inside use effect');
-    console.log(selectedCategory);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
@@ -161,6 +159,7 @@ const onClickSearch = (e) => {
   else{
     setOneArticle(true);
   }
+  setSelectedCategory('All')
   getArticles();
 }
 
@@ -187,13 +186,11 @@ const reloadCategories = (e) =>{
 }
 
   /**
-   * 
    * @param {what is written in the textField} e 
    * e gets saved at the textFieldContent variable
    */
   const handleTextField = e => {
     setTextFieldContent( e.target.value);
-    console.log(textFieldContent);
   }
 
   return (
